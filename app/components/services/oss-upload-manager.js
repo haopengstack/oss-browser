@@ -204,8 +204,10 @@ angular.module('web')
           //修复window下 \ 问题
           filePath = bucketInfo.key ? (bucketInfo.key.replace(/(\/*$)/g, '') +'/'+ filePath ) : filePath;
 
-
-          if (fs.statSync(absPath).isDirectory()) {
+  
+          if ((fileName.indexOf('.asar') ==-1 || fileName.lastIndexOf('.asar')!=fileName.length-5)
+           && fs.statSync(absPath).isDirectory()) {
+            
             //创建目录
             ossSvs2.createFolder(bucketInfo.region, bucketInfo.bucket, filePath+ '/').then(function(){
               //判断是否刷新文件列表

@@ -24,16 +24,28 @@ try{
 // }
 
 obj.crc64FileProcess = function(p, fn){
+  
+  process.noAsar=true;
   fs.stat(p, function(err, data){
+    process.noAsar=false;
+
     if(err)fn(err);
     else{
-      if(data.size > 100 * 1024){
+      //大小超过1MB，启动子进程校验CRC
+      if(data.size > 1 * 1024 * 1024){
+        
         var proc = cp.fork(path.join(__dirname, 'fork.js'), [p])
+         
         proc.on('message', function(data){
            fn(data.error, data.data)
         });
       }else{
-        obj.crc64File(p,fn);
+        process.noAsar=true;
+        obj.crc64File(p,function(a,b,c){
+          process.noAsar=false;
+          fn(a,b,c)
+        }); 
+        
       }
     }
   });

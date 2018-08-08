@@ -217,8 +217,9 @@ UploadJob.prototype.uploadSingle = function () {
 
   var self = this;
   var filePath = self.from.path;
-
+  process.noAsar=true;
   fs.readFile(filePath, function (err, data) {
+    process.noAsar=false;
 
     if (self.stopFlag) {
       return;
@@ -344,9 +345,11 @@ UploadJob.prototype.uploadMultipart = function (checkPoints) {
     }
 
     if(isDebug) console.info("Got upload ID", err, uploadId, self.from.path);
-
+    process.noAsar=true;
     fs.open(checkPoints.file.path, 'r', function (err, fd) {
       fs.closeSync(fd);
+    process.noAsar=false;
+
       //console.log('fs. open', err, fd)
       if(err){
         console.error('can not open file', checkPoints.file.path, err);
@@ -375,13 +378,19 @@ UploadJob.prototype.uploadMultipart = function (checkPoints) {
 
 
   function readBytes(p, bf, offset, len, start, fn){
+    process.noAsar=true;
     fs.open(p, 'r', function(err, fd){
+    process.noAsar=false;
+
       if(err){
         fn(err);
         return;
       }
+    process.noAsar=true;
       fs.read(fd, bf, offset, len, start, function (err, bfRead, buf) {
         fs.closeSync(fd);
+    process.noAsar=false;
+
         if (err) {
           fn(err)
         }

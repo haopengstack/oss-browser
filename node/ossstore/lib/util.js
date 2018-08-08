@@ -84,7 +84,9 @@ function checkFileHash(filePath, hashCrc64ecma,fileMd5, fn) {
 function getBigFileMd5(p, fn){
   console.time('get md5 hash for ['+p+']');
    var md5sum = crypto.createHash('md5');
+   process.noAsar=true;
    var stream = fs.createReadStream(p);
+   process.noAsar=false;
    stream.on('data', function(chunk) {
        md5sum.update(chunk);
    });

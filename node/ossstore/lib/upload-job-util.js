@@ -187,8 +187,10 @@ function prepareChunks(filePath, checkPoints, fn){
   checkPoints = checkPoints || {};
 
   var fileName = path.basename(filePath);
-
+  process.noAsar=true;
   fs.stat(filePath, function(err, state) {
+    process.noAsar=false;
+
     if (err) {
       callback(err);
       return;
